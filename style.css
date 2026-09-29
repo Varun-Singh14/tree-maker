@@ -1,0 +1,560 @@
+/* ==========================================================
+   Theme tokens
+   Dark is the default; light overrides via [data-theme="light"].
+   theme.js sets data-theme before first paint.
+   ========================================================== */
+:root {
+  color-scheme: dark;
+
+  --bg: #080a15;
+  --surface: #0e1122;
+  --surface-2: #161a34;
+  --border: #22274a;
+  --text: #e9ecff;
+  --muted: #8b92c6;
+  --placeholder: #5c6396;
+
+  --accent: #7c5cff;
+  --accent-hover: #9479ff;
+  --accent-contrast: #ffffff;
+  --accent-ring: rgba(34, 211, 238, 0.35);
+  --focus: #22d3ee;
+
+  --danger: #e5484d;
+  --danger-hover: #ff5f65;
+  --disabled-bg: #1b2040;
+  --disabled-text: #5c6396;
+
+  --canvas-bg: #060813;
+  --canvas-dot: #1a1f40;
+
+  --node-fill: #111533;
+  --node-stroke: #5f6dff;
+  --node-text: #f4f5ff;
+  --node-sel-fill: #14264a;
+  --node-sel-stroke: #22d3ee;
+  --node-sel-glow: rgba(34, 211, 238, 0.75);
+  --link: #4451a8;
+
+  --export-bg: #0b0e1d;
+  --ascii-bg: #04050d;
+  --ascii-text: #5ef2d6;
+
+  --scroll-track: #0a0c19;
+  --scroll-thumb: #2a3060;
+  --scroll-thumb-hover: #3b4390;
+
+  --title-from: #c6b8ff;
+  --title-to: #22d3ee;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f3f4fb;
+  --surface: #ffffff;
+  --surface-2: #eceefa;
+  --border: #d5d9ee;
+  --text: #1e2140;
+  --muted: #5f6488;
+  --placeholder: #9aa0c0;
+
+  --accent: #4b52e0;
+  --accent-hover: #3a41c8;
+  --accent-contrast: #ffffff;
+  --accent-ring: rgba(75, 82, 224, 0.28);
+  --focus: #d97706;
+
+  --danger: #d0353f;
+  --danger-hover: #b52a33;
+  --disabled-bg: #dfe2f2;
+  --disabled-text: #9297b8;
+
+  --canvas-bg: #eef0fb;
+  --canvas-dot: #cfd4ec;
+
+  --node-fill: #ffffff;
+  --node-stroke: #7178cf;
+  --node-text: #1e2140;
+  --node-sel-fill: #fff4d6;
+  --node-sel-stroke: #e08a00;
+  --node-sel-glow: rgba(224, 138, 0, 0.35);
+  --link: #a3a9d4;
+
+  --export-bg: #f8f9ff;
+  --ascii-bg: #ffffff;
+  --ascii-text: #0b6b5c;
+
+  --scroll-track: #e6e8f6;
+  --scroll-thumb: #b7bce0;
+  --scroll-thumb-hover: #9aa0d0;
+
+  --title-from: #4b52e0;
+  --title-to: #0e9f88;
+}
+
+/* ---------- Base ---------- */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Smooth cross-fade when switching themes (skipped for reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  body,
+  .topbar,
+  #sidebar,
+  #canvas-container,
+  #export-section,
+  .ascii-output,
+  button,
+  #sidebar input[type="text"],
+  .node-circle,
+  .tree-link {
+    transition: background-color 0.25s ease, border-color 0.25s ease,
+      color 0.25s ease, fill 0.25s ease, stroke 0.25s ease;
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 6px;
+  border: 2px solid var(--scroll-track);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.topbar h1 {
+  font-size: 18px;
+  margin: 0;
+  letter-spacing: 0.2px;
+  background: linear-gradient(90deg, var(--title-from), var(--title-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---------- Buttons ---------- */
+button {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: none;
+  border-radius: 6px;
+  padding: 7px 14px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+button:hover {
+  background: var(--accent-hover);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+}
+
+button.danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+button.danger:hover {
+  background: var(--danger-hover);
+}
+
+/* Theme toggle */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+}
+
+.icon-btn:hover {
+  background: var(--surface-2);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Show the icon for the theme you'd switch TO */
+.icon-btn .icon-moon {
+  display: none;
+}
+:root[data-theme="light"] .icon-btn .icon-sun {
+  display: none;
+}
+:root[data-theme="light"] .icon-btn .icon-moon {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .icon-btn svg {
+    transition: transform 0.35s ease;
+  }
+  .icon-btn:hover svg {
+    transform: rotate(25deg);
+  }
+}
+
+/* ---------- Layout ---------- */
+.layout {
+  display: flex;
+  height: calc(100vh - 55px);
+}
+
+#sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 16px;
+  overflow-y: auto;
+}
+
+#sidebar h3 {
+  margin-top: 0;
+  font-size: 14px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#sidebar p.hint {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+#sidebar label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
+
+#sidebar input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+}
+
+#sidebar input[type="text"]::placeholder {
+  color: var(--placeholder);
+}
+
+#sidebar input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-ring);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.btn-row button {
+  flex: 1;
+  min-width: 100px;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ---------- Canvas ---------- */
+#canvas-container {
+  flex: 1;
+  overflow: auto;
+  background: var(--canvas-bg);
+  background-image: radial-gradient(var(--canvas-dot) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+#tree-svg {
+  display: block;
+}
+
+.node-circle {
+  fill: var(--node-fill);
+  stroke: var(--node-stroke);
+  stroke-width: 2;
+}
+
+.node-group.selected .node-circle {
+  stroke: var(--node-sel-stroke);
+  stroke-width: 3;
+  fill: var(--node-sel-fill);
+  filter: drop-shadow(0 0 6px var(--node-sel-glow));
+}
+
+.node-group {
+  cursor: pointer;
+}
+
+.node-group:hover .node-circle {
+  stroke: var(--accent);
+}
+
+.node-group.selected:hover .node-circle {
+  stroke: var(--node-sel-stroke);
+}
+
+.node-text {
+  fill: var(--node-text);
+  font-size: 13px;
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+  user-select: none;
+}
+
+.tree-link {
+  stroke: var(--link);
+  stroke-width: 2;
+  fill: none;
+}
+
+/* ---------- Export ---------- */
+#export-section {
+  border-top: 1px solid var(--border);
+  background: var(--export-bg);
+  padding: 12px 20px;
+  max-height: 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+.export-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.export-header h2 {
+  font-size: 14px;
+  margin: 0;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.export-header div {
+  display: flex;
+  gap: 8px;
+}
+
+.ascii-output {
+  margin: 10px 0 0 0;
+  background: var(--ascii-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  overflow: auto;
+  font-family: "SF Mono", Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--ascii-text);
+  white-space: pre;
+  flex: 1;
+}
+
+/* ==========================================================
+   Dark theme extras: glow, gradients, depth
+   (light theme stays clean and flat)
+   ========================================================== */
+:root[data-theme="dark"] body {
+  background:
+    radial-gradient(900px 500px at 0% -10%, rgba(124, 92, 255, 0.14), transparent 60%),
+    radial-gradient(800px 500px at 100% 110%, rgba(34, 211, 238, 0.10), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+:root[data-theme="dark"] .topbar {
+  background: linear-gradient(180deg, #131736, #0e1122);
+  border-bottom-color: transparent;
+  box-shadow: 0 1px 0 rgba(124, 92, 255, 0.45), 0 10px 40px rgba(124, 92, 255, 0.10);
+}
+
+:root[data-theme="dark"] .topbar h1 {
+  filter: drop-shadow(0 0 12px rgba(124, 92, 255, 0.45));
+}
+
+:root[data-theme="dark"] #sidebar {
+  background: linear-gradient(180deg, #0f1226, #0b0d1c);
+  border-right-color: #1c2142;
+}
+
+:root[data-theme="dark"] #sidebar h3 {
+  color: #b7bdf0;
+}
+
+:root[data-theme="dark"] #sidebar input[type="text"] {
+  background: #080a18;
+  border-color: #262c55;
+}
+
+:root[data-theme="dark"] #sidebar input[type="text"]:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.22), 0 0 18px rgba(34, 211, 238, 0.18);
+}
+
+/* Buttons: violet -> blue gradient with a soft glow */
+:root[data-theme="dark"] button {
+  background: linear-gradient(135deg, #7c5cff, #4f7bff);
+  box-shadow: 0 2px 14px rgba(124, 92, 255, 0.35);
+}
+
+:root[data-theme="dark"] button:hover {
+  background: linear-gradient(135deg, #9479ff, #6b93ff);
+  box-shadow: 0 2px 22px rgba(124, 92, 255, 0.6);
+}
+
+:root[data-theme="dark"] button.danger {
+  background: linear-gradient(135deg, #e5484d, #c2305f);
+  box-shadow: 0 2px 14px rgba(229, 72, 77, 0.3);
+}
+
+:root[data-theme="dark"] button.danger:hover {
+  background: linear-gradient(135deg, #ff5f65, #d93d72);
+  box-shadow: 0 2px 22px rgba(229, 72, 77, 0.55);
+}
+
+:root[data-theme="dark"] button:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .icon-btn {
+  background: #141838;
+  border: 1px solid #2b3163;
+  color: #ffd479;
+  box-shadow: none;
+}
+
+:root[data-theme="dark"] .icon-btn:hover {
+  background: #1a1f47;
+  border-color: #22d3ee;
+  color: #22d3ee;
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.35);
+}
+
+/* Canvas: subtle aurora + dot grid */
+:root[data-theme="dark"] #canvas-container {
+  background-color: var(--canvas-bg);
+  background-image:
+    radial-gradient(var(--canvas-dot) 1px, transparent 1px),
+    radial-gradient(600px 400px at 15% 20%, rgba(124, 92, 255, 0.10), transparent 70%),
+    radial-gradient(600px 400px at 85% 85%, rgba(34, 211, 238, 0.07), transparent 70%);
+  background-size: 20px 20px, 100% 100%, 100% 100%;
+}
+
+/* Nodes glow, links glow faintly */
+:root[data-theme="dark"] .node-circle {
+  filter: drop-shadow(0 0 5px rgba(95, 109, 255, 0.45));
+}
+
+:root[data-theme="dark"] .node-group:hover .node-circle {
+  stroke: #9aa6ff;
+  filter: drop-shadow(0 0 9px rgba(140, 155, 255, 0.8));
+}
+
+:root[data-theme="dark"] .node-group.selected .node-circle,
+:root[data-theme="dark"] .node-group.selected:hover .node-circle {
+  stroke: #22d3ee;
+  filter: drop-shadow(0 0 10px var(--node-sel-glow));
+}
+
+:root[data-theme="dark"] .node-text {
+  font-weight: 600;
+}
+
+:root[data-theme="dark"] .tree-link {
+  filter: drop-shadow(0 0 3px rgba(95, 109, 255, 0.5));
+}
+
+/* Export panel: terminal feel */
+:root[data-theme="dark"] #export-section {
+  background: linear-gradient(180deg, #0d1022, #0a0c1b);
+  border-top-color: #1c2142;
+}
+
+:root[data-theme="dark"] .export-header h2 {
+  color: #b7bdf0;
+}
+
+:root[data-theme="dark"] .ascii-output {
+  border-color: #1f2a4d;
+  box-shadow: inset 0 0 30px rgba(34, 211, 238, 0.05);
+  text-shadow: 0 0 8px rgba(94, 242, 214, 0.35);
+}
